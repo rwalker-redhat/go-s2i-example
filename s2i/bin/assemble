@@ -1,0 +1,25 @@
+#!/bin/bash -e
+#
+# S2I assemble script for the 's2i-go' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+# If the 's2i-go' assemble script is executed with the '-h' flag, print the usage.
+if [[ "$1" == "-h" ]]; then
+	exec /usr/libexec/s2i/usage
+fi
+
+# Restore artifacts from the previous build (if they exist).
+#
+# Copy source code and fix permissions
+echo "---> Installing application source..."
+cp -Rf /tmp/src/. /opt/app-root
+echo "---> Fixing persmissions..."
+chmod -R 775 ./opt/app-root
+echo "---> Changing directory..."
+cd ./opt/app-root
+echo "---> Building application from source..."
+go build ./cmd/web
